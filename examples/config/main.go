@@ -14,9 +14,9 @@ import (
 
 func main() {
 	var (
-		host   = flag.String("host", "", "The IP or hostname of the gateway")
+		host   = flag.String("host", "", "The IP or hostname of the panels")
 		port   = flag.Int("port", 16021, "The port to connect to")
-		apiKey = flag.String("apiKey", "", "The API key of the gateway")
+		apiKey = flag.String("apiKey", "", "The API key of the panels")
 
 		discover = flag.Bool("discover", false, "Whether to run the discovery tool")
 		create   = flag.Bool("create", false, "Whether to create a new API key or not")

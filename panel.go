@@ -16,11 +16,23 @@ func (c *Client) GetPanel(ctx context.Context) (*LightPanel, error) {
 // SetOn sets the panel to either be on or off
 func (c *Client) SetOn(ctx context.Context, on bool) error {
 	var req struct {
-		Value bool `json:"value"`
+		On struct {
+			Value bool `json:"value"`
+		} `json:"on"`
 	}
 
-	req.Value = on
-	return c.put(ctx, "state/on", req)
+	req.On.Value = on
+	return c.put(ctx, "state", req)
+}
+
+// SetScene selects the specified scene name on the panel and applies it
+func (c *Client) SetScene(ctx context.Context, sceneName string) error {
+	var req struct {
+		SceneName string `json:"select"`
+	}
+
+	req.SceneName = sceneName
+	return c.put(ctx, "effects", req)
 }
 
 // SetBrightness will set the brightness level and (optionally) duration in seconds
