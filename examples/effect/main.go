@@ -12,9 +12,9 @@ import (
 
 func main() {
 	var (
-		host   = flag.String("host", "", "The IP or hostname of the panels")
-		port   = flag.Int("port", 16021, "The port of the panels")
-		apiKey = flag.String("apiKey", "", "The API key of the panels")
+		host   = flag.String("host", "", "The IP or hostname of the panel")
+		port   = flag.Int("port", 16021, "The port of the panel")
+		apiKey = flag.String("apiKey", "", "The API key of the panel")
 
 		name = flag.String("name", "", "The name of the effect to operate on")
 	)

@@ -5,6 +5,12 @@ import "context"
 // GetPanel retrieves the panel details
 func (c *Client) GetPanel(ctx context.Context) (*LightPanel, error) {
 	panel := &LightPanel{}
+	panel.State.On = &BoolValue{}
+	panel.State.Brightness = &IntRangeValue{}
+	panel.State.Hue = &IntRangeValue{}
+	panel.State.Saturation = &IntRangeValue{}
+	panel.State.CT = &IntRangeValue{}
+
 	err := c.get(ctx, "", panel)
 	if err != nil {
 		return nil, err
@@ -163,21 +169,18 @@ type LightPanel struct {
 
 	State  PanelState  `json:"state"`
 	Effect PanelEffect `json:"effects"`
-	Layout struct {
-		Orientation IntRangeValue `json:"globalOrientation"`
-		Panels      PanelLayout   `json:"layout"`
-	} `json:"panelLayout"`
-	Rhythm Rhythm `json:"rhythm"`
+	Layout PanelLayout `json:"panelLayout"`
+	Rhythm Rhythm      `json:"rhythm"`
 }
 
 // PanelState contains the current state of the light panel
 type PanelState struct {
-	On         BoolValue     `json:"on"`
-	Brightness IntRangeValue `json:"brightness"`
-	Hue        IntRangeValue `json:"hue"`
-	Saturation IntRangeValue `json:"sat"`
-	CT         IntRangeValue `json:"ct"`
-	ColorMode  string        `json:"colorMode"`
+	On         *BoolValue     `json:"on"`
+	Brightness *IntRangeValue `json:"brightness"`
+	Hue        *IntRangeValue `json:"hue"`
+	Saturation *IntRangeValue `json:"sat"`
+	CT         *IntRangeValue `json:"ct"`
+	ColorMode  *string        `json:"colorMode"`
 }
 
 // PanelEffect represents the current and possible set of effects on this light panel
@@ -198,8 +201,14 @@ type IntRangeValue struct {
 	Min   int `json:"min"`
 }
 
-// PanelLayout represents the layout of all the panels making up this light
+// PanelLayout represents both the panels laid out plus the overall orientation
 type PanelLayout struct {
+	Orientation IntRangeValue `json:"globalOrientation"`
+	Panels      Layout        `json:"layout"`
+}
+
+// Layout represents the layout of all the panels making up this light
+type Layout struct {
 	PanelCount int             `json:"numPanels"`
 	SideLength int             `json:"sideLength"`
 	Panels     []PanelPosition `json:"positionData"`
