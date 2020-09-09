@@ -22,7 +22,7 @@ func (c *Client) SetOn(ctx context.Context, on bool) error {
 	}
 
 	req.On.Value = on
-	return c.put(ctx, "state", req)
+	return c.put(ctx, "state", req, nil)
 }
 
 // SetScene selects the specified scene name on the panel and applies it
@@ -32,7 +32,19 @@ func (c *Client) SetScene(ctx context.Context, sceneName string) error {
 	}
 
 	req.SceneName = sceneName
-	return c.put(ctx, "effects", req)
+	return c.put(ctx, "effects", req, nil)
+}
+
+// SetOrientation updates the orientation of the panels (orientation is 360 degrees - from 0 to 359)
+func (c *Client) SetOrientation(ctx context.Context, orientation int) error {
+	var req struct {
+		Orientation struct {
+			Value int `json:"value"`
+		} `json:"globalOrientation"`
+	}
+
+	req.Orientation.Value = orientation
+	return c.put(ctx, "panelLayout", req, nil)
 }
 
 // SetBrightness will set the brightness level and (optionally) duration in seconds
@@ -47,7 +59,7 @@ func (c *Client) SetBrightness(ctx context.Context, level int, duration int) err
 	req.Brightness.Value = level
 	req.Brightness.Duration = duration
 
-	return c.put(ctx, "state", req)
+	return c.put(ctx, "state", req, nil)
 }
 
 // IncrementBrightness will increment the brightness level. Both positive and negative values are supported.
@@ -60,7 +72,7 @@ func (c *Client) IncrementBrightness(ctx context.Context, amount int) error {
 
 	req.Brightness.Increment = amount
 
-	return c.put(ctx, "state", req)
+	return c.put(ctx, "state", req, nil)
 }
 
 // SetHue will set the hue of the light
@@ -73,7 +85,7 @@ func (c *Client) SetHue(ctx context.Context, hue int) error {
 
 	req.Hue.Value = hue
 
-	return c.put(ctx, "state", req)
+	return c.put(ctx, "state", req, nil)
 }
 
 // IncrementHue will increment the hue of the light. Both positive and negative values are supported.
@@ -86,7 +98,7 @@ func (c *Client) IncrementHue(ctx context.Context, amount int) error {
 
 	req.Hue.Increment = amount
 
-	return c.put(ctx, "state", req)
+	return c.put(ctx, "state", req, nil)
 }
 
 // SetSaturation will set the saturation of the light
@@ -99,7 +111,7 @@ func (c *Client) SetSaturation(ctx context.Context, sat int) error {
 
 	req.Saturation.Value = sat
 
-	return c.put(ctx, "state", req)
+	return c.put(ctx, "state", req, nil)
 }
 
 // IncrementSaturation will increment the saturation of the light. Both positive and negative values are supported.
@@ -112,7 +124,7 @@ func (c *Client) IncrementSaturation(ctx context.Context, amount int) error {
 
 	req.Saturation.Increment = amount
 
-	return c.put(ctx, "state", req)
+	return c.put(ctx, "state", req, nil)
 }
 
 // SetCT will set the colour temperature of the light
@@ -125,7 +137,7 @@ func (c *Client) SetCT(ctx context.Context, ct int) error {
 
 	req.ColorTemperature.Value = ct
 
-	return c.put(ctx, "state", req)
+	return c.put(ctx, "state", req, nil)
 }
 
 // IncrementCT will increment the colour temperature of the light. Both positive and negative values are supported.
@@ -138,7 +150,7 @@ func (c *Client) IncrementCT(ctx context.Context, amount int) error {
 
 	req.ColorTemperature.Increment = amount
 
-	return c.put(ctx, "state", req)
+	return c.put(ctx, "state", req, nil)
 }
 
 // LightPanel represents the current state of a Nanoleaf Light Panel
@@ -149,8 +161,8 @@ type LightPanel struct {
 	FirmwareVersion string `json:"firmwareVersion"`
 	ModelNumber     string `json:"model"`
 
-	State  State  `json:"state"`
-	Effect Effect `json:"effects"`
+	State  PanelState  `json:"state"`
+	Effect PanelEffect `json:"effects"`
 	Layout struct {
 		Orientation IntRangeValue `json:"globalOrientation"`
 		Panels      PanelLayout   `json:"layout"`
@@ -158,8 +170,8 @@ type LightPanel struct {
 	Rhythm Rhythm `json:"rhythm"`
 }
 
-// State contains the current state of the light panel
-type State struct {
+// PanelState contains the current state of the light panel
+type PanelState struct {
 	On         BoolValue     `json:"on"`
 	Brightness IntRangeValue `json:"brightness"`
 	Hue        IntRangeValue `json:"hue"`
@@ -168,8 +180,8 @@ type State struct {
 	ColorMode  string        `json:"colorMode"`
 }
 
-// Effect represents the current and possible set of effects on this light panel
-type Effect struct {
+// PanelEffect represents the current and possible set of effects on this light panel
+type PanelEffect struct {
 	Current string   `json:"select"`
 	Options []string `json:"effectsList"`
 }

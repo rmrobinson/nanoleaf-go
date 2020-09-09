@@ -132,7 +132,7 @@ func (c *Client) get(ctx context.Context, path string, respType interface{}) err
 	return ErrUnknown
 }
 
-func (c *Client) put(ctx context.Context, path string, reqType interface{}) error {
+func (c *Client) put(ctx context.Context, path string, reqType interface{}, respType interface{}) error {
 	req, err := json.Marshal(reqType)
 	if err != nil {
 		return err
@@ -151,7 +151,9 @@ func (c *Client) put(ctx context.Context, path string, reqType interface{}) erro
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == 204 {
+	if resp.StatusCode == 200 {
+		return json.NewDecoder(resp.Body).Decode(respType)
+	} else if resp.StatusCode == 204 {
 		return nil
 	} else if resp.StatusCode == 400 {
 		return ErrBadRequest
