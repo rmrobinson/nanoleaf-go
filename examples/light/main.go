@@ -23,6 +23,7 @@ func main() {
 			sat  = flag.Int("sat", 0, "The saturation level to set")
 			name = flag.String("name", "", "The name of the device to set")
 		*/
+		orientation = flag.Int("orientation", -1, "The orientation to set")
 
 		setState  = flag.Bool("setState", false, "Whether to set the specified state fields")
 		setConfig = flag.Bool("setConfig", false, "Whether to set the specified config fields")
@@ -49,7 +50,14 @@ func main() {
 		}
 	}
 	if *setConfig {
-		// TODO: allow the name to be modified
+		if *orientation >= 0 {
+			err := c.SetOrientation(context.Background(), *orientation)
+			if err != nil {
+				fmt.Printf("error setting orientation: %s\n", err.Error())
+				return
+			}
+			fmt.Printf("orientation set\n")
+		}
 		fmt.Printf("set complete\n")
 	}
 
