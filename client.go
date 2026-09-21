@@ -18,6 +18,9 @@ var (
 	ErrBadRequest = errors.New("bad request")
 	// ErrNotFound is returned if the resource was not found
 	ErrNotFound = errors.New("not found")
+	// ErrTooManyRequests is returned if the panel's rate limit was exceeded. Callers should back
+	// off before retrying.
+	ErrTooManyRequests = errors.New("too many requests")
 	// ErrUnknown is returned if the specific failure reason isn't known
 	ErrUnknown = errors.New("unknown")
 )
@@ -127,6 +130,8 @@ func (c *Client) get(ctx context.Context, path string, respType interface{}) err
 		return ErrUnauthorized
 	} else if resp.StatusCode == 404 {
 		return ErrNotFound
+	} else if resp.StatusCode == 429 {
+		return ErrTooManyRequests
 	}
 
 	return ErrUnknown
@@ -163,6 +168,8 @@ func (c *Client) put(ctx context.Context, path string, reqType interface{}, resp
 		return ErrNotFound
 	} else if resp.StatusCode == 422 {
 		return ErrBadRequest
+	} else if resp.StatusCode == 429 {
+		return ErrTooManyRequests
 	}
 
 	return ErrUnknown
